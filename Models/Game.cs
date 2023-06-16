@@ -4,17 +4,29 @@ namespace ASP.NET_Core_MVC_Application.Models;
 
 public enum GameGenre
 {
+    [Display(Name = "Action")]
     Action,
+    [Display(Name = "Adventure")]
     Adventure,
+    [Display(Name = "Role-Playing Game")]
     RPG,
+    [Display(Name = "Simulation")]
     Simulation,
+    [Display(Name = "Strategy")]
     Strategy,
+    [Display(Name = "Sports")]
     Sports,
+    [Display(Name = "Racing")]
     Racing,
+    [Display(Name = "Fighting")]
     Fighting,
+    [Display(Name = "Shooter")]
     Horror,
+    [Display(Name = "Puzzle")]
     Puzzle,
+    [Display(Name = "Idle")]
     Idle,
+    [Display(Name = "Other")]
     Other
 }
 
