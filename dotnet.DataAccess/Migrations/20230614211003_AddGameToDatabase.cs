@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ASP.NET_Core_MVC_Application.Migrations
+namespace dotnet.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddGameToDatabase : Migration

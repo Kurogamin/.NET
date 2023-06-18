@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ASP.NET_Core_MVC_Application.Models;
+using dotnet.Models;
 
-namespace ASP.NET_Core_MVC_Application.Data;
+namespace dotnet.DataAccess.Data;
 
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-
     }
 
     public DbSet<Game> Games { get; set; }

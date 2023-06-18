@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASP.NET MVC", "dotnet.MVC\ASP.NET MVC.csproj", "{B30A6EA3-2BBE-4BE3-9290-CE0E30F6CB00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetMVC", "dotnet.MVC\dotnetMVC.csproj", "{B30A6EA3-2BBE-4BE3-9290-CE0E30F6CB00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet.DataAccess", "dotnet.DataAccess\dotnet.DataAccess.csproj", "{57DE6B8F-6317-49A0-804E-0E2B41550B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet.DataAccess", "dotnet.DataAccess\dotnet.DataAccess.csproj", "{57DE6B8F-6317-49A0-804E-0E2B41550B99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet.Models", "dotnet.Models\dotnet.Models.csproj", "{941DA37A-9E4D-4D80-A666-3407DD35A35A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet.Utility", "dotnet.Utility\dotnet.Utility.csproj", "{A67A55E5-AFA7-40E3-A55C-00C66FF9FAE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{57DE6B8F-6317-49A0-804E-0E2B41550B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57DE6B8F-6317-49A0-804E-0E2B41550B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57DE6B8F-6317-49A0-804E-0E2B41550B99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{941DA37A-9E4D-4D80-A666-3407DD35A35A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{941DA37A-9E4D-4D80-A666-3407DD35A35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{941DA37A-9E4D-4D80-A666-3407DD35A35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{941DA37A-9E4D-4D80-A666-3407DD35A35A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A67A55E5-AFA7-40E3-A55C-00C66FF9FAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67A55E5-AFA7-40E3-A55C-00C66FF9FAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67A55E5-AFA7-40E3-A55C-00C66FF9FAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67A55E5-AFA7-40E3-A55C-00C66FF9FAE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

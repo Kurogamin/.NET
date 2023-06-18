@@ -1,21 +1,23 @@
-﻿using ASP.NET_Core_MVC_Application.Data;
-using ASP.NET_Core_MVC_Application.Models;
+﻿using dotnet.DataAccess;
+using dotnet.DataAccess.Data;
+using dotnet.DataAccess.Repository.IRepository;
+using dotnet.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ASP.NET_Core_MVC_Application.Controllers;
+namespace dotnet.Controllers;
 
 public class GameController : Controller
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IGameRepository _gameRepository;
 
-    public GameController(ApplicationDbContext dbContext)
+    public GameController(IGameRepository gameRepository)
     {
-        _dbContext = dbContext;
+        _gameRepository = gameRepository;
     }
 
     public IActionResult Index()
     {
-        IEnumerable<Game> games = _dbContext.Games;
+        IEnumerable<Game> games = _gameRepository.GetAll();
         return View(games);
     }
 
@@ -33,11 +35,10 @@ public class GameController : Controller
             return View(newGame);
         }
 
-        _dbContext.Games.Add(newGame);
-        _dbContext.SaveChanges();
+        _gameRepository.Add(newGame);
+        _gameRepository.SaveChanges();
 
         TempData["Success"] = "The game has been added successfully!";
-
 
         return RedirectToAction("Index");
     }
@@ -49,7 +50,7 @@ public class GameController : Controller
             return NotFound();
         }
 
-        var gameFromDatabase = _dbContext.Games.Find(id);
+        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
@@ -68,8 +69,8 @@ public class GameController : Controller
             return View(game);
         }
 
-        _dbContext.Games.Update(game);
-        _dbContext.SaveChanges();
+        _gameRepository.Update(game);
+        _gameRepository.SaveChanges();
 
         TempData["Success"] = "The game has been updated successfully!";
 
@@ -83,7 +84,7 @@ public class GameController : Controller
             return NotFound();
         }
 
-        var gameFromDatabase = _dbContext.Games.Find(id);
+        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
@@ -97,18 +98,17 @@ public class GameController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult RemovePOST(int? id)
     {
-        var gameFromDatabase = _dbContext.Games.Find(id);
+        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
             return NotFound();
         }
 
-        _dbContext.Games.Remove(gameFromDatabase);
-        _dbContext.SaveChanges();
+        _gameRepository.Remove(gameFromDatabase);
+        _gameRepository.SaveChanges();
 
         TempData["Success"] = "The game has been removed successfully!";
-
 
         return RedirectToAction("Index");
     }

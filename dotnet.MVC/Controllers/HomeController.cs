@@ -1,4 +1,4 @@
-﻿using ASP.NET_Core_MVC_Application.Models;
+﻿using dotnet.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

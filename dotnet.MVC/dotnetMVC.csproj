@@ -17,4 +17,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\dotnet.DataAccess\dotnet.DataAccess.csproj" />
+    <ProjectReference Include="..\dotnet.Models\dotnet.Models.csproj" />
+    <ProjectReference Include="..\dotnet.Utility\dotnet.Utility.csproj" />
+  </ItemGroup>
+
 </Project>
