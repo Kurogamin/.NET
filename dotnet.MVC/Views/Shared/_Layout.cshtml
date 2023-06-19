@@ -21,11 +21,23 @@
         <div class="collapse navbar-collapse" id="navbarColor02">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Game" asp-action="Index">Games</a>
+                <a class="nav-link" asp-area="Admin" asp-controller="Game" asp-action="Index">Games</a>
             </li>
+
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <button type="button" class="btn btn-primary">Manage</button>
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                        <a class="nav-link" asp-area="Admin" asp-controller="Game" asp-action="Index">Games</a>
+                        <hr />
+                        <a class="nav-link" asp-area="Admin" asp-controller="Studio" asp-action="Index">Studios</a>
+                    </div>
+                </div>
+            </div>
             @*<li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
               <div class="dropdown-menu">
@@ -52,7 +64,7 @@
         </main>
     </div>
 
-    <footer class="footer text-success bg-dark">
+    <footer class="footer text-success bg-dark" style="position:fixed; bottom:0px">
         <div class="container">
             &copy; 2023 - ASP.NET_Core_MVC_Application - <a class="text-info" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

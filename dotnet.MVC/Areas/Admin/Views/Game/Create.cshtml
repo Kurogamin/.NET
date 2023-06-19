@@ -8,18 +8,24 @@
 		</div>
 		<div class="mb-3">
 			<label asp-for="Title"></label>
-			<input asp-for="Title" class="form-control" />
+			<input asp-for="Title" class="form-control shadow" />
 			<span asp-validation-for="Title" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
 			<label class="form-label mt-4" asp-for="Genre"></label>
-			<select class="form-select" asp-for="@Model.Genre" asp-items="Html.GetEnumSelectList<GameGenre>()"></select>
+			<select class="form-select shadow" asp-for="@Model.Genre" asp-items="Html.GetEnumSelectList<GameGenre>()"></select>
 		</div>
 		<div class="mb-3">
 			<label class="form-label mt-4" asp-for="Description"></label>
-			<textarea asp-for="Description" maxlength="512" class="form-control"></textarea>
+			<textarea asp-for="Description" maxlength="512" class="form-control shadow"></textarea>
 			<span asp-validation-for="Description" class="text-danger"></span>
-
+		</div>
+		<div class="mb-3">
+			<select asp-for="Studio" asp-items="ViewBag.StudiosList" class="form-select shadow" >
+				<option disabled selected> Select Studio </option>	
+			</select>
+			<label asp-for="Studio"></label>
+			<span asp-validation-for="Studio" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Add game</button>
 		<a asp-controller="Game" asp-action="Index" class="btn btn-secondary" style="width:150px">Cancel</a>

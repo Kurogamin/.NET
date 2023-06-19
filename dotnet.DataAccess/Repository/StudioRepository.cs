@@ -4,23 +4,22 @@ using dotnet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace dotnet.DataAccess.Repository;
 
-public class GameRepository : Repository<Game>, IGameRepository
+public class StudioRepository : Repository<Studio>, IStudioRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public GameRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public StudioRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public void Update(Game game)
+    public void Update(Studio studio)
     {
-        _dbContext.Games.Update(game);
+        _dbContext.Studios.Update(studio);
     }
 }

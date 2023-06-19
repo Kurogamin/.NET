@@ -1,5 +1,4 @@
-﻿using dotnet.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace dotnet.DataAccess.Repository.IRepository;
 
-public interface IGameRepository : IRepository<Game>
+public interface IUnitOfWork
 {
-    void Update(Game game);
+    IGameRepository GameRepository { get; }
+    IStudioRepository StudioRepository { get; }
+
+    void Save();
 }

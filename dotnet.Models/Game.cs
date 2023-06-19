@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace dotnet.Models;
 
@@ -12,6 +13,9 @@ public enum GameGenre
 
     [Display(Name = "Role-Playing Game")]
     RPG,
+
+    [Display(Name = "Massively Multiplayer Online Role-Playing Game")]
+    MMORPG,
 
     [Display(Name = "Simulation")]
     Simulation,
@@ -53,4 +57,11 @@ public class Game
     public GameGenre Genre { get; set; }
 
     public string? Description { get; set; }
+
+    public int StudioId { get; set; }
+
+    [ForeignKey("StudioId")]
+    public Studio Studio { get; set; }
+
+    public string ImageUrl { get; set; } = string.Empty;
 }

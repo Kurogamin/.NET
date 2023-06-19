@@ -3,26 +3,37 @@ using dotnet.DataAccess.Data;
 using dotnet.DataAccess.Repository.IRepository;
 using dotnet.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace dotnet.Controllers;
+namespace dotnet.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class GameController : Controller
 {
-    private readonly IGameRepository _gameRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public GameController(IGameRepository gameRepository)
+    public GameController(IUnitOfWork unitOfWork)
     {
-        _gameRepository = gameRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public IActionResult Index()
     {
-        IEnumerable<Game> games = _gameRepository.GetAll();
+        IEnumerable<Game> games = _unitOfWork.GameRepository.GetAll();
+
         return View(games);
     }
 
     public IActionResult Create()
     {
+        IEnumerable<SelectListItem> studiosList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.Id.ToString()
+        });
+
+        ViewBag.StudiosList = studiosList;
+
         return View();
     }
 
@@ -35,8 +46,8 @@ public class GameController : Controller
             return View(newGame);
         }
 
-        _gameRepository.Add(newGame);
-        _gameRepository.SaveChanges();
+        _unitOfWork.GameRepository.Add(newGame);
+        _unitOfWork.Save();
 
         TempData["Success"] = "The game has been added successfully!";
 
@@ -50,7 +61,7 @@ public class GameController : Controller
             return NotFound();
         }
 
-        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
+        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
@@ -69,8 +80,8 @@ public class GameController : Controller
             return View(game);
         }
 
-        _gameRepository.Update(game);
-        _gameRepository.SaveChanges();
+        _unitOfWork.GameRepository.Update(game);
+        _unitOfWork.Save();
 
         TempData["Success"] = "The game has been updated successfully!";
 
@@ -84,7 +95,7 @@ public class GameController : Controller
             return NotFound();
         }
 
-        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
+        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
@@ -98,15 +109,15 @@ public class GameController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult RemovePOST(int? id)
     {
-        var gameFromDatabase = _gameRepository.Get(x => x.Id == id);
+        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
 
         if (gameFromDatabase is null)
         {
             return NotFound();
         }
 
-        _gameRepository.Remove(gameFromDatabase);
-        _gameRepository.SaveChanges();
+        _unitOfWork.GameRepository.Remove(gameFromDatabase);
+        _unitOfWork.Save();
 
         TempData["Success"] = "The game has been removed successfully!";
 

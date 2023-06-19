@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dotnet.DataAccess.Repository.IRepository;
 
-public interface IGameRepository : IRepository<Game>
+public interface IStudioRepository : IRepository<Studio>
 {
-    void Update(Game game);
+    void Update(Studio studio);
 }

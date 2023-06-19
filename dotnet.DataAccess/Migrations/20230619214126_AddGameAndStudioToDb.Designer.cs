@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet.DataAccess.Data;
 
@@ -10,9 +11,11 @@ using dotnet.DataAccess.Data;
 namespace dotnet.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230619214126_AddGameAndStudioToDb")]
+    partial class AddGameAndStudioToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,20 +38,11 @@ namespace dotnet.DataAccess.Migrations
                     b.Property<int>("Genre")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StudioId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StudioId");
 
                     b.ToTable("Games");
 
@@ -58,8 +52,6 @@ namespace dotnet.DataAccess.Migrations
                             Id = 1,
                             Description = "A game about a witcher",
                             Genre = 2,
-                            ImageUrl = "",
-                            StudioId = 3,
                             Title = "The Witcher 3"
                         },
                         new
@@ -67,8 +59,6 @@ namespace dotnet.DataAccess.Migrations
                             Id = 2,
                             Description = "A game about a dragonborn",
                             Genre = 2,
-                            ImageUrl = "",
-                            StudioId = 2,
                             Title = "The Elder Scrolls V: Skyrim"
                         },
                         new
@@ -76,8 +66,6 @@ namespace dotnet.DataAccess.Migrations
                             Id = 3,
                             Description = "A game about world of warcraft",
                             Genre = 3,
-                            ImageUrl = "",
-                            StudioId = 1,
                             Title = "World of Warcraft"
                         });
                 });
@@ -120,17 +108,6 @@ namespace dotnet.DataAccess.Migrations
                             DisplayOrder = 3,
                             Name = "CD Projekt Red"
                         });
-                });
-
-            modelBuilder.Entity("dotnet.Models.Game", b =>
-                {
-                    b.HasOne("dotnet.Models.Studio", "Studio")
-                        .WithMany()
-                        .HasForeignKey("StudioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Studio");
                 });
 #pragma warning restore 612, 618
         }
