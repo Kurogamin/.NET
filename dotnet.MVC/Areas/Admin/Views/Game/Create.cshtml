@@ -1,4 +1,4 @@
-﻿@model Game
+﻿@model GameViewModel
 
 <form method="post">
 	<div class="border p-3 mt-4">
@@ -7,25 +7,30 @@
 			<hr />
 		</div>
 		<div class="mb-3">
-			<label asp-for="Title"></label>
-			<input asp-for="Title" class="form-control shadow" />
-			<span asp-validation-for="Title" class="text-danger"></span>
+			<label asp-for="Game.Title"></label>
+			<input asp-for="Game.Title" class="form-control shadow" />
+			<span asp-validation-for="Game.Title" class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<label class="form-label mt-4" asp-for="Genre"></label>
-			<select class="form-select shadow" asp-for="@Model.Genre" asp-items="Html.GetEnumSelectList<GameGenre>()"></select>
+			<label class="form-label mt-4" asp-for="Game.Genre"></label>
+			<select class="form-select shadow" asp-for="@Model.Game.Genre" asp-items="Html.GetEnumSelectList<GameGenre>()"></select>
 		</div>
 		<div class="mb-3">
-			<label class="form-label mt-4" asp-for="Description"></label>
-			<textarea asp-for="Description" maxlength="512" class="form-control shadow"></textarea>
-			<span asp-validation-for="Description" class="text-danger"></span>
+			<label asp-for="Game.ImageUrl"></label>
+			<input type="file" class="form-control shadow" />
+			<span class="text-danger"></span>
 		</div>
 		<div class="mb-3">
-			<select asp-for="Studio" asp-items="ViewBag.StudiosList" class="form-select shadow" >
+			<label asp-for="Game.StudioId"></label>
+			<select asp-for="Game.StudioId" asp-items="@Model.StudioList" class="form-select shadow" >
 				<option disabled selected> Select Studio </option>	
 			</select>
-			<label asp-for="Studio"></label>
-			<span asp-validation-for="Studio" class="text-danger"></span>
+			<span asp-validation-for="Game.StudioId" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label class="form-label mt-4" asp-for="Game.Description"></label>
+			<textarea asp-for="Game.Description" maxlength="512" class="form-control shadow"></textarea>
+			<span asp-validation-for="Game.Description" class="text-danger"></span>
 		</div>
 		<button type="submit" class="btn btn-primary" style="width:150px">Add game</button>
 		<a asp-controller="Game" asp-action="Index" class="btn btn-secondary" style="width:150px">Cancel</a>

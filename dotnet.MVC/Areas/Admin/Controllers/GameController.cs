@@ -2,6 +2,7 @@
 using dotnet.DataAccess.Data;
 using dotnet.DataAccess.Repository.IRepository;
 using dotnet.Models;
+using dotnet.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -26,27 +27,35 @@ public class GameController : Controller
 
     public IActionResult Create()
     {
-        IEnumerable<SelectListItem> studiosList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+        GameViewModel gameViewModel = new GameViewModel
         {
-            Text = x.Name,
-            Value = x.Id.ToString()
-        });
+            Game = new Game(),
+            StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            })
+        };
 
-        ViewBag.StudiosList = studiosList;
-
-        return View();
+        return View(gameViewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(Game newGame)
+    public IActionResult Create(GameViewModel newGameViewModel)
     {
         if (!ModelState.IsValid)
         {
-            return View(newGame);
+            newGameViewModel.StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            });
+
+            return View(newGameViewModel);
         }
 
-        _unitOfWork.GameRepository.Add(newGame);
+        _unitOfWork.GameRepository.Add(newGameViewModel.Game);
         _unitOfWork.Save();
 
         TempData["Success"] = "The game has been added successfully!";
