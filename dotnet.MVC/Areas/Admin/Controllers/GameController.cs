@@ -5,131 +5,178 @@ using dotnet.Models;
 using dotnet.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace dotnet.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class GameController : Controller
 {
-    private readonly IUnitOfWork _unitOfWork;
+	private readonly IUnitOfWork _unitOfWork;
+	private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public GameController(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
+	public GameController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+	{
+		_unitOfWork = unitOfWork;
+		_webHostEnvironment = webHostEnvironment;
+	}
 
-    public IActionResult Index()
-    {
-        IEnumerable<Game> games = _unitOfWork.GameRepository.GetAll();
+	private void AddImageToGameViewModel(GameViewModel gameViewModel, IFormFile imageFile)
+	{
+		string webRootPath = _webHostEnvironment.WebRootPath;
 
-        return View(games);
-    }
+		if (!string.IsNullOrEmpty(gameViewModel.Game.ImageUrl))
+		{
+			RemoveOldImage(gameViewModel, webRootPath);
+		}
 
-    public IActionResult Create()
-    {
-        GameViewModel gameViewModel = new GameViewModel
-        {
-            Game = new Game(),
-            StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            })
-        };
+		string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+		string gameImagesPath = Path.Combine(webRootPath, @"images\game");
 
-        return View(gameViewModel);
-    }
+		using (var fileStream = new FileStream(Path.Combine(gameImagesPath, fileName), FileMode.Create))
+		{
+			imageFile.CopyTo(fileStream);
+		}
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Create(GameViewModel newGameViewModel)
-    {
-        if (!ModelState.IsValid)
-        {
-            newGameViewModel.StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            });
+		gameViewModel.Game.ImageUrl = $@"\images\game\{fileName}";
+	}
 
-            return View(newGameViewModel);
-        }
+	private static void RemoveOldImage(GameViewModel gameViewModel, string webRootPath)
+	{
+		string oldImagePath = Path.Combine(webRootPath, gameViewModel.Game.ImageUrl.TrimStart('\\'));
 
-        _unitOfWork.GameRepository.Add(newGameViewModel.Game);
-        _unitOfWork.Save();
+		if (System.IO.File.Exists(oldImagePath))
+		{
+			System.IO.File.Delete(oldImagePath);
+		}
+	}
 
-        TempData["Success"] = "The game has been added successfully!";
+	private GameViewModel CreateNewViewModel()
+	{
+		return new GameViewModel
+		{
+			Game = new Game(),
+			StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+			{
+				Text = x.Name,
+				Value = x.Id.ToString()
+			}),
 
-        return RedirectToAction("Index");
-    }
+			GenreList = _unitOfWork.GenreRepository.GetAll().Select(x => new SelectListItem
+			{
+				Text = x.Name,
+				Value = x.Id.ToString()
+			})
+		};
+	}
 
-    public IActionResult Edit(int? id)
-    {
-        if (id is null || id == 0)
-        {
-            return NotFound();
-        }
+	private void PopulateSelectLists(GameViewModel gameViewModel)
+	{
+		gameViewModel.StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
+		{
+			Text = x.Name,
+			Value = x.Id.ToString()
+		});
 
-        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
+		gameViewModel.GenreList = _unitOfWork.GenreRepository.GetAll().Select(x => new SelectListItem
+		{
+			Text = x.Name,
+			Value = x.Id.ToString()
+		});
+	}
 
-        if (gameFromDatabase is null)
-        {
-            return NotFound();
-        }
+	public IActionResult Index()
+	{
+		IEnumerable<Game> games = _unitOfWork.GameRepository.GetAll(includeProperties: "Studio,Genre");
 
-        return View(gameFromDatabase);
-    }
+		return View(games);
+	}
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Edit(Game game)
-    {
-        if (!ModelState.IsValid)
-        {
-            return View(game);
-        }
+	public IActionResult Upsert(int? id)
+	{
+		GameViewModel gameViewModel = CreateNewViewModel();
 
-        _unitOfWork.GameRepository.Update(game);
-        _unitOfWork.Save();
+		if (id is null || id == 0)
+		{
+			return View(gameViewModel);
+		}
 
-        TempData["Success"] = "The game has been updated successfully!";
+		gameViewModel.Game = _unitOfWork.GameRepository.Get(x => x.Id == id);
+		return View(gameViewModel);
+	}
 
-        return RedirectToAction("Index");
-    }
+	[HttpPost]
+	[ValidateAntiForgeryToken]
+	public IActionResult Upsert(GameViewModel gameViewModel, IFormFile? imageFile)
+	{
+		if (!ModelState.IsValid)
+		{
+			PopulateSelectLists(gameViewModel);
 
-    public IActionResult Remove(int? id)
-    {
-        if (id is null || id == 0)
-        {
-            return NotFound();
-        }
+			return View(gameViewModel);
+		}
 
-        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
+		if (imageFile is not null)
+		{
+			AddImageToGameViewModel(gameViewModel, imageFile);
+		}
 
-        if (gameFromDatabase is null)
-        {
-            return NotFound();
-        }
+		if (gameViewModel.Game.Id == 0)
+		{
+			_unitOfWork.GameRepository.Add(gameViewModel.Game);
+		}
+		else
+		{
+			_unitOfWork.GameRepository.Update(gameViewModel.Game);
+		}
 
-        return View(gameFromDatabase);
-    }
+		_unitOfWork.Save();
 
-    [HttpPost, ActionName("Remove")]
-    [ValidateAntiForgeryToken]
-    public IActionResult RemovePOST(int? id)
-    {
-        var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
+		TempData["Success"] = "The game has been added successfully!";
 
-        if (gameFromDatabase is null)
-        {
-            return NotFound();
-        }
+		return RedirectToAction("Index");
+	}
 
-        _unitOfWork.GameRepository.Remove(gameFromDatabase);
-        _unitOfWork.Save();
+	public IActionResult Remove(int? id)
+	{
+		if (id is null || id == 0)
+		{
+			return NotFound();
+		}
 
-        TempData["Success"] = "The game has been removed successfully!";
+		var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
 
-        return RedirectToAction("Index");
-    }
+		if (gameFromDatabase is null)
+		{
+			return NotFound();
+		}
+
+		return View(gameFromDatabase);
+	}
+
+	[HttpPost, ActionName("Remove")]
+	[ValidateAntiForgeryToken]
+	public IActionResult RemovePOST(int? id)
+	{
+		var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
+
+		if (gameFromDatabase is null)
+		{
+			return NotFound();
+		}
+
+		_unitOfWork.GameRepository.Remove(gameFromDatabase);
+		_unitOfWork.Save();
+
+		TempData["Success"] = "The game has been removed successfully!";
+
+		return RedirectToAction("Index");
+	}
+
+	[HttpGet]
+	public IActionResult GetAll()
+	{
+		List<Game> gamesList = _unitOfWork.GameRepository.GetAll(includeProperties: "Studio,Genre").ToList();
+		return Json(new { data = gamesList });
+	}
 }

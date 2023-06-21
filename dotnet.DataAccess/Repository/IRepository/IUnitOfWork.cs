@@ -8,8 +8,9 @@ namespace dotnet.DataAccess.Repository.IRepository;
 
 public interface IUnitOfWork
 {
-    IGameRepository GameRepository { get; }
-    IStudioRepository StudioRepository { get; }
+	IGameRepository GameRepository { get; }
+	IStudioRepository StudioRepository { get; }
+	IGenreRepository GenreRepository { get; }
 
-    void Save();
+	void Save();
 }

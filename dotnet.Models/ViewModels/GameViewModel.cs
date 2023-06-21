@@ -14,4 +14,7 @@ public class GameViewModel
 
 	[ValidateNever]
 	public IEnumerable<SelectListItem> StudioList { get; set; }
+
+	[ValidateNever]
+	public IEnumerable<SelectListItem> GenreList { get; set; }
 }
