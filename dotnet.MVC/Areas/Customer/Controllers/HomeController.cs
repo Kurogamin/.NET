@@ -1,4 +1,5 @@
-﻿using dotnet.Models;
+﻿using dotnet.DataAccess.Repository.IRepository;
+using dotnet.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,15 +9,18 @@ namespace dotnet.Areas.Customer.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
+	public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+	{
+		_logger = logger;
+		_unitOfWork = unitOfWork;
+	}
 
-    public IActionResult Index()
+	public IActionResult Index()
     {
-        return View();
+        IEnumerable<Game> gameList = _unitOfWork.GameRepository.GetAll(includeProperties: "Studio,Genre");
+        return View(gameList);
     }
 
     public IActionResult Privacy()

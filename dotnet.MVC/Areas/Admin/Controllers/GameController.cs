@@ -27,7 +27,7 @@ public class GameController : Controller
 
 		if (!string.IsNullOrEmpty(gameViewModel.Game.ImageUrl))
 		{
-			RemoveOldImage(gameViewModel, webRootPath);
+			RemoveOldImageFromGameViewModel(gameViewModel, webRootPath);
 		}
 
 		string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
@@ -41,9 +41,19 @@ public class GameController : Controller
 		gameViewModel.Game.ImageUrl = $@"\images\game\{fileName}";
 	}
 
-	private static void RemoveOldImage(GameViewModel gameViewModel, string webRootPath)
+	private static void RemoveOldImageFromGameViewModel(GameViewModel gameViewModel, string webRootPath)
 	{
 		string oldImagePath = Path.Combine(webRootPath, gameViewModel.Game.ImageUrl.TrimStart('\\'));
+
+		if (System.IO.File.Exists(oldImagePath))
+		{
+			System.IO.File.Delete(oldImagePath);
+		}
+	}
+
+	private static void RemoveOldImageFromGame(Game game, string webRootPath)
+	{
+		string oldImagePath = Path.Combine(webRootPath, game.ImageUrl.TrimStart('\\'));
 
 		if (System.IO.File.Exists(oldImagePath))
 		{
@@ -137,23 +147,6 @@ public class GameController : Controller
 		return RedirectToAction("Index");
 	}
 
-	public IActionResult Remove(int? id)
-	{
-		if (id is null || id == 0)
-		{
-			return NotFound();
-		}
-
-		var gameFromDatabase = _unitOfWork.GameRepository.Get(x => x.Id == id);
-
-		if (gameFromDatabase is null)
-		{
-			return NotFound();
-		}
-
-		return View(gameFromDatabase);
-	}
-
 	[HttpPost, ActionName("Remove")]
 	[ValidateAntiForgeryToken]
 	public IActionResult RemovePOST(int? id)
@@ -178,5 +171,25 @@ public class GameController : Controller
 	{
 		List<Game> gamesList = _unitOfWork.GameRepository.GetAll(includeProperties: "Studio,Genre").ToList();
 		return Json(new { data = gamesList });
+	}
+
+	[HttpDelete]
+	public IActionResult Remove(int? id)
+	{
+		var gameToDelete = _unitOfWork.GameRepository.Get(x => x.Id == id);
+
+		if (gameToDelete is null)
+		{
+			return Json(new { success = false, message = "Error while deleting" });
+		}
+
+		var webRootPath = _webHostEnvironment.WebRootPath;
+
+		RemoveOldImageFromGame(gameToDelete, webRootPath);
+
+		_unitOfWork.GameRepository.Remove(gameToDelete);
+		_unitOfWork.Save();
+
+		return Json(new { success = true, message = "Delete successful" });
 	}
 }
