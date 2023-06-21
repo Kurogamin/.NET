@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using dotnet.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace dotnet.DataAccess.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 {
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 	{
@@ -15,6 +17,8 @@ public class ApplicationDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		base.OnModelCreating(modelBuilder);
+
 		modelBuilder.Entity<Studio>().HasData(
 			new Studio { Id = 1, Name = "Blizzard", DisplayOrder = 1 },
 			new Studio { Id = 2, Name = "Bethesda", DisplayOrder = 2 },
