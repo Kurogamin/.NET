@@ -30,7 +30,7 @@ public class GameController : Controller
 
         if (!string.IsNullOrEmpty(gameViewModel.Game.ImageUrl))
         {
-            RemoveOldImageFromGameViewModel(gameViewModel, webRootPath);
+            RemoveOldImageFromGame(gameViewModel.Game, webRootPath);
         }
 
         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
@@ -44,16 +44,6 @@ public class GameController : Controller
         gameViewModel.Game.ImageUrl = $@"\images\game\{fileName}";
     }
 
-    private static void RemoveOldImageFromGameViewModel(GameViewModel gameViewModel, string webRootPath)
-    {
-        string oldImagePath = Path.Combine(webRootPath, gameViewModel.Game.ImageUrl.TrimStart('\\'));
-
-        if (System.IO.File.Exists(oldImagePath))
-        {
-            System.IO.File.Delete(oldImagePath);
-        }
-    }
-
     private static void RemoveOldImageFromGame(Game game, string webRootPath)
     {
         string oldImagePath = Path.Combine(webRootPath, game.ImageUrl.TrimStart('\\'));
@@ -62,25 +52,6 @@ public class GameController : Controller
         {
             System.IO.File.Delete(oldImagePath);
         }
-    }
-
-    private GameViewModel CreateNewViewModel()
-    {
-        return new GameViewModel
-        {
-            Game = new Game(),
-            StudioList = _unitOfWork.StudioRepository.GetAll().Select(x => new SelectListItem
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            }),
-
-            GenreList = _unitOfWork.GenreRepository.GetAll().Select(x => new SelectListItem
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            })
-        };
     }
 
     private void PopulateSelectLists(GameViewModel gameViewModel)
@@ -96,6 +67,14 @@ public class GameController : Controller
             Text = x.Name,
             Value = x.Id.ToString()
         });
+    }
+
+    private GameViewModel CreateNewViewModel()
+    {
+        GameViewModel newGameViewModel = new GameViewModel();
+        PopulateSelectLists(newGameViewModel);
+
+        return newGameViewModel;
     }
 
     public IActionResult Index()

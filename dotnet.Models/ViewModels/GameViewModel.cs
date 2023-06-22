@@ -10,11 +10,16 @@ namespace dotnet.Models.ViewModels;
 
 public class GameViewModel
 {
-	public Game Game { get; set; }
+    public Game Game { get; set; }
 
-	[ValidateNever]
-	public IEnumerable<SelectListItem> StudioList { get; set; }
+    public GameViewModel()
+    {
+        Game = new Game();
+    }
 
-	[ValidateNever]
-	public IEnumerable<SelectListItem> GenreList { get; set; }
+    [ValidateNever]
+    public IEnumerable<SelectListItem>? StudioList { get; set; }
+
+    [ValidateNever]
+    public IEnumerable<SelectListItem>? GenreList { get; set; }
 }
